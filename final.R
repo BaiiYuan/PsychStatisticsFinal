@@ -13,8 +13,17 @@ df1 <- subset(df, select = c("Musical.instruments",
 #summary(df1)
 
 
-install.packages("polycor")
+#install.packages("polycor")
 library("polycor")
+library("vcd")
+
+
+data("Arthritis")
+tab <- xtabs(~Improved + Treatment, data = Arthritis)
+summary(assocstats(tab))
+
+
+
 
 # Smoke
 df_smoke <- subset(df, select = c("Musical.instruments", "Smoking"))
@@ -23,12 +32,16 @@ df_smoke$Smoking = as.integer(df_smoke$Smoking >= 2)
 #polychoric(df_smoke[,c(1,2)])
 polychor(df_smoke$Musical.instruments, df_smoke$Smoking)
 
+chisq.test(df_smoke$Musical.instruments, df_smoke$Smoking, correct = F)
 
 # Alcohol
 df_alc <- subset(df, select = c("Musical.instruments", "Alcohol"))
 df_alc$Alcohol = as.integer(df_alc$Alcohol >= 1)
 #polychoric(df_alc[,c(1,2)])
 polychor(df_alc$Musical.instruments, df_alc$Alcohol)
+chisq.test(df_alc$Musical.instruments, df_alc$Alcohol, correct = F)
+
+
 
 # Keeping promises
 cor.test(rank(df1$Musical.instruments), rank(df1$Keeping.promises), method = 'pearson')
@@ -45,7 +58,9 @@ cor.test(rank(df1$Musical.instruments), rank(df1$Getting.angry), method = 'pears
 # Charity
 cor.test(rank(df1$Musical.instruments), rank(df1$Charity), method = 'pearson')
 
-
+model1 <- lm(Musical.instruments ~ Keeping.promises + Reliability + Cheating.in.school
+             + Lying + Punctuality + Getting.angry + Charity, df1)
+summary(model1)
 
 # not used
 
