@@ -1,15 +1,54 @@
+#### DATA LOAD
 df <- read.csv("pre-processed_data.csv")
 df <- na.omit(df)
 #df$Gender = as.integer(df$Gender == "female")
-
-
-#mode = "Smoking"
 df1 <- subset(df, select = c("Musical.instruments",
                              #"Gender", "Education", "Only.child",
                              "Smoking", "Alcohol", "Keeping.promises",
                              "Reliability", "Cheating.in.school", "Lying", "Punctuality",
                              "Getting.angry", "Charity"))
-#df1 <- na.omit(df1)
+df1 <- df1[(df1$Smoking) != 2,]
+df1$Smoking = as.integer(df1$Smoking >= 2)
+df1$Alcohol = as.integer(df1$Alcohol >= 1)
+#### DATA LOAD
+
+
+#### CORR MATRIX
+cor(df1)
+#### CORR MATRIX
+
+
+#### ANOVA
+library(jmv)
+anova(df1, dep="Musical.instruments", factors="Smoking", descStats = T, homo = T, effectSize = "eta")
+stats::anova(lm(Musical.instruments~Smoking, data = df1))
+
+anova(df1, dep="Musical.instruments", factors="Alcohol", descStats = T, homo = T, effectSize = "eta")
+stats::anova(lm(Musical.instruments~Alcohol, data = df1))
+
+anova(df1, dep="Musical.instruments", factors="Keeping.promises", descStats = T, homo = T, effectSize = "eta")
+stats::anova(lm(Musical.instruments~Keeping.promises, data = df1))
+
+anova(df1, dep="Musical.instruments", factors="Reliability", descStats = T, homo = T, effectSize = "eta")
+stats::anova(lm(Musical.instruments~Reliability, data = df1))
+
+anova(df1, dep="Musical.instruments", factors="Cheating.in.school", descStats = T, homo = T, effectSize = "eta")
+stats::anova(lm(Musical.instruments~Cheating.in.school, data = df1))
+
+anova(df1, dep="Musical.instruments", factors="Lying", descStats = T, homo = T, effectSize = "eta")
+stats::anova(lm(Musical.instruments~Lying, data = df1))
+
+anova(df1, dep="Musical.instruments", factors="Punctuality", descStats = T, homo = T, effectSize = "eta")
+stats::anova(lm(Musical.instruments~Punctuality, data = df1))
+
+anova(df1, dep="Musical.instruments", factors="Getting.angry", descStats = T, homo = T, effectSize = "eta")
+stats::anova(lm(Musical.instruments~Getting.angry, data = df1))
+
+anova(df1, dep="Musical.instruments", factors="Charity", descStats = T, homo = T, effectSize = "eta")
+stats::anova(lm(Musical.instruments~Charity, data = df1))
+#### ANOVA
+
+
 #summary(df1)
 
 
@@ -18,28 +57,30 @@ library("polycor")
 library("vcd")
 
 
-data("Arthritis")
-tab <- xtabs(~Improved + Treatment, data = Arthritis)
-summary(assocstats(tab))
+#test
+#data("Arthritis")
+#tab <- xtabs(~Improved + Treatment, data = Arthritis)
+#summary(assocstats(tab))
 
 
 
 
 # Smoke
-df_smoke <- subset(df, select = c("Musical.instruments", "Smoking"))
-df_smoke <- df_smoke[(df_smoke$Smoking) != 2,]
-df_smoke$Smoking = as.integer(df_smoke$Smoking >= 2)
+# df_smoke <- subset(df, select = c("Musical.instruments", "Smoking"))
+# df_smoke <- df_smoke[(df_smoke$Smoking) != 2,]
+# df_smoke$Smoking = as.integer(df_smoke$Smoking >= 2)
 #polychoric(df_smoke[,c(1,2)])
-polychor(df_smoke$Musical.instruments, df_smoke$Smoking)
 
-chisq.test(df_smoke$Musical.instruments, df_smoke$Smoking, correct = F)
+
+polychor(df1$Musical.instruments, df1$Smoking)
+chisq.test(df1$Musical.instruments, df1$Smoking, correct = F)
 
 # Alcohol
-df_alc <- subset(df, select = c("Musical.instruments", "Alcohol"))
-df_alc$Alcohol = as.integer(df_alc$Alcohol >= 1)
+# df_alc <- subset(df, select = c("Musical.instruments", "Alcohol"))
+# df_alc$Alcohol = as.integer(df_alc$Alcohol >= 1)
 #polychoric(df_alc[,c(1,2)])
-polychor(df_alc$Musical.instruments, df_alc$Alcohol)
-chisq.test(df_alc$Musical.instruments, df_alc$Alcohol, correct = F)
+polychor(df1$Musical.instruments, df1$Alcohol)
+chisq.test(df1$Musical.instruments, df1$Alcohol, correct = F)
 
 
 
@@ -61,6 +102,9 @@ cor.test(rank(df1$Musical.instruments), rank(df1$Charity), method = 'pearson')
 model1 <- lm(Musical.instruments ~ Keeping.promises + Reliability + Cheating.in.school
              + Lying + Punctuality + Getting.angry + Charity, df1)
 summary(model1)
+
+
+
 
 # not used
 
